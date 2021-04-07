@@ -1,13 +1,3 @@
-// TODO: create a scatter plot between two of the data variables
-
-// TODO: create a scatter plot that represents each state with circle elements. 
-
-// TODO: You'll code this graphic in the app.js file of your homework directory—make sure you pull in the data from data.csv by using the d3.csv function. 
-
-// TODO: Include state abbreviations in the circles.
-
-// TODO:  Create and situate your axes and labels to the left and bottom of the chart.
-
 // Set up svg parameters
 var svgWidth = 960
 var svgHeight = 750

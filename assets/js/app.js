@@ -32,7 +32,7 @@ var chartGroup = svg.append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
 // Import Data and generate plot
-d3.csv('/../data/data.csv').then(censusData => {
+d3.csv('/assets/data/data.csv').then(censusData => {
       console.log(censusData)
 
       // Parse data and case as numbers

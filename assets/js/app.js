@@ -10,7 +10,7 @@
 
 // Set up svg parameters
 var svgWidth = 960
-var svgHeight = 500
+var svgHeight = 750
 
 var margin = {
       top: 20,
@@ -37,21 +37,21 @@ d3.csv('/assets/data/data.csv').then(censusData => {
 
       // Parse data and case as numbers
       censusData.forEach(data => {
-            data.healthcare = +data.healthcare
-            data.obesity = +data.obesity
+            data.smokes = +data.smokes
+            data.age = +data.age
       })
 
       // Create scale functions
       var xLinearScale = d3.scaleLinear()
-            .domain([20, d3.max(censusData, d => d.healthcare)])
+            .domain([8, d3.max(censusData, d => d.smokes)])
             .range([0, width])
       
       var yLinearScale = d3.scaleLinear()
-            .domain([0, d3.max(censusData, d => d.obesity)])
+            .domain([28, d3.max(censusData, d => d.age)])
             .range([height, 0])
 
       // Create axis functions
-      var bottomAxis = axisBottom(xLinearScale)
+      var bottomAxis = d3.axisBottom(xLinearScale)
       var leftAxis = d3.axisLeft(yLinearScale)
 
       // Append axes to the chart
@@ -64,48 +64,67 @@ d3.csv('/assets/data/data.csv').then(censusData => {
 
       // Create circles
       var circlesGroup = chartGroup.selectAll('circle')
-      .data(censusData)
-      .enter()
-      .append('circle')
-      .attr('cx', d => xLinearScale(d.healthcare))
-      .attr('cy', d => yLinearScale(d.obesity))
-      .attr('r', '15')
-      .attr('fill', '#74A60A')
-      .attr('opacity','.5')
+            .data(censusData)
+            .enter()
+            .append('circle')
+            .attr('cx', d => xLinearScale(d.smokes))
+            .attr('cy', d => yLinearScale(d.age))
+            .attr('r', '15')
+            .attr('fill', '#467302')
+            .attr('opacity','.5')
+      
+            chartGroup.append('text')
+            .style('text-anchor', 'middle')
+            .style('font-family', 'sans-serif')
+            .style('font-size', '8px')
+            .style('fill', '#F2F2F2')
+            .selectAll('tspan')
+            .data(censusData)
+            .enter()
+            .append('tspan')
+            .attr('x', data => {
+                  return xLinearScale(data.smokes)
+            })
+            .attr('y', data => {
+                  return yLinearScale(data.age - .1)
+            })
+            .text(data => {
+                  return data.abbr
+            })
 
       // Initialize tooltip
       var toolTip = d3.tip()
             .attr('class', 'tooltip')
-            .offset([80, -60])
+            .style('background', '#A2BF63')
             .html(function(d) {
-                  return (`${d.state}<br>Healthcare: ${d.healthcare}%<br>Obesity: ${d.obesity}%`)
+                  return (`${d.state}<br>Smokers (%): ${d.smokes}%<br>Age: ${d.age}%`)
             })
       
       // Create tooltip in chart
       chartGroup.call(toolTip)
 
       // Create event listeners to display and hide the tooltip
-      circlesGroupGroup.on('click', data => {
+      circlesGroup.on('click', data => {
             toolTip.show(data, this)
       })
             // on mouseout event
             .on('mouseout', (data, index) => {
                   toolTip.hide(data)
             })
-      
-      // Create axes lables
-      chartGroup.append('text')
-            .attr('transform', 'rotate(-90)')
-            .attr('y', 0 - margin.left + 40)
-            .attr('x', 0 - (height / 2))
-            .attr('dy', '1em')
-            .attr('class', 'axisText')
-            .text('Lacking Healthcare (%)')
-      
-      chartGroup.append('text')
-            .attr('transform', `translate(${width / 2}, ${height + margin.top + 30})`)
-            .attr('class', 'axisText')
-            .text('Obesity (%)')
+
+            // Create axes lables
+            chartGroup.append('text')
+                  .attr('transform', 'rotate(-90)')
+                  .attr('y', 0 - margin.left + 40)
+                  .attr('x', 0 - (height / 2))
+                  .attr('dy', '1em')
+                  .attr('class', 'axisText')
+                  .text('Median Age')
+            
+            chartGroup.append('text')
+                  .attr('transform', `translate(${width / 2}, ${height + margin.top + 30})`)
+                  .attr('class', 'axisText')
+                  .text('Population that Smokes (%)')
 }).catch(error => {
       console.log(error)
 })
